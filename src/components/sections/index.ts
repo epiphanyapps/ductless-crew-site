@@ -5,3 +5,4 @@ export { default as Testimonials } from "./Testimonials";
 export { default as FAQ } from "./FAQ";
 export { default as Process } from "./Process";
 export { default as CTA } from "./CTA";
+export { default as ContactForm } from "./ContactForm";
