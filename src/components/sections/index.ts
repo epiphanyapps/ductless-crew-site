@@ -6,3 +6,6 @@ export { default as FAQ } from "./FAQ";
 export { default as Process } from "./Process";
 export { default as CTA } from "./CTA";
 export { default as ContactForm } from "./ContactForm";
+export { default as ImageCarousel } from "./ImageCarousel";
+export { default as IssueSelector } from "./IssueSelector";
+export { default as LeadGenForm } from "./LeadGenForm";

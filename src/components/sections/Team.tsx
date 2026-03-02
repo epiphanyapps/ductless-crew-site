@@ -1,3 +1,7 @@
+"use client";
+
+import { EditableSection } from "@/components/admin";
+
 const teamMembers = [
   {
     name: "Ravi",
@@ -21,8 +25,9 @@ const teamMembers = [
 
 export default function Team() {
   return (
-    <section className="py-20 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <EditableSection editHref="/admin/team" editLabel="Edit Team">
+      <section className="py-20 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-navy)] mb-4">
@@ -73,8 +78,9 @@ export default function Team() {
               <p className="text-gray-600">{stat.label}</p>
             </div>
           ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </EditableSection>
   );
 }

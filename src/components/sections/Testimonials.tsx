@@ -1,3 +1,7 @@
+"use client";
+
+import { EditableSection } from "@/components/admin";
+
 const testimonials = [
   {
     customerName: "Elena",
@@ -42,8 +46,9 @@ function StarRating({ rating }: { rating: number }) {
 
 export default function Testimonials() {
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <EditableSection editHref="/admin/testimonials" editLabel="Edit Testimonials">
+      <section className="py-20 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-navy)] mb-4">
@@ -72,7 +77,8 @@ export default function Testimonials() {
             </div>
           ))}
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </EditableSection>
   );
 }
