@@ -2,6 +2,8 @@
 
 import { Header, Footer } from "@/components/layout";
 import { useState } from "react";
+import { client } from "@/lib/amplify-client";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 const contactInfo = {
   phone: "929-543-5995",
@@ -33,16 +35,37 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { isReady: recaptchaReady, getToken } = useRecaptcha();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
 
-    // TODO: Integrate with Amplify backend
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Get reCAPTCHA token if enabled
+      const recaptchaToken = await getToken("contact_page_form");
 
-    setSubmitted(true);
-    setIsSubmitting(false);
+      const { errors } = await client.models.ContactSubmission.create({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        message: `${formData.description}${recaptchaToken ? "\n[reCAPTCHA verified]" : ""}`,
+        status: "new",
+      });
+
+      if (errors) {
+        throw new Error(errors[0]?.message || "Failed to submit form");
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Form submission error:", err);
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -74,9 +97,9 @@ export default function ContactPage() {
         </section>
 
         {/* Contact Form & Info Section */}
-        <section className="py-20 bg-white">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-12">
+            <div className="grid lg:grid-cols-2 gap-8 md:gap-12">
               {/* Contact Form */}
               <div>
                 <h2 className="text-2xl font-bold text-[var(--color-navy)] mb-6">
@@ -124,6 +147,12 @@ export default function ContactPage() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
+                    {error && (
+                      <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                        {error}
+                      </div>
+                    )}
+
                     <div>
                       <label
                         htmlFor="name"
@@ -143,7 +172,7 @@ export default function ContactPage() {
                       />
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
                       <div>
                         <label
                           htmlFor="phone"
@@ -203,10 +232,10 @@ export default function ContactPage() {
 
                     <button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !recaptchaReady}
                       className="w-full bg-[var(--color-orange)] hover:bg-[var(--color-orange-dark)] disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-4 rounded-lg font-semibold transition-colors"
                     >
-                      {isSubmitting ? "Sending..." : "Send Message"}
+                      {isSubmitting ? "Sending..." : !recaptchaReady ? "Loading..." : "Send Message"}
                     </button>
                   </form>
                 )}
@@ -381,9 +410,9 @@ export default function ContactPage() {
         </section>
 
         {/* Stats Section */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-12 sm:py-16 bg-gray-50">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
               {stats.map((stat) => (
                 <div key={stat.label} className="text-center">
                   <p className="text-4xl font-bold text-[var(--color-orange)]">
@@ -397,7 +426,7 @@ export default function ContactPage() {
         </section>
 
         {/* Map Placeholder */}
-        <section className="h-80 bg-gray-200 flex items-center justify-center">
+        <section className="h-48 sm:h-64 md:h-80 bg-gray-200 flex items-center justify-center">
           <div className="text-center">
             <svg
               className="w-16 h-16 mx-auto text-gray-400 mb-4"

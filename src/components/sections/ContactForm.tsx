@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { client } from "@/lib/amplify-client";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 type FormType = "lighting" | "general";
 
@@ -14,16 +16,40 @@ export default function ContactForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { isReady: recaptchaReady, getToken } = useRecaptcha();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
 
-    // TODO: Integrate with Amplify backend
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Get reCAPTCHA token if enabled
+      const recaptchaToken = await getToken("contact_form");
 
-    setSubmitted(true);
-    setIsSubmitting(false);
+      const serviceType = formType === "lighting" ? "Lighting Installation" : "General Service";
+      const fullMessage = `[${serviceType}] ${formData.description}${recaptchaToken ? `\n[reCAPTCHA verified]` : ""}`;
+
+      const { errors } = await client.models.ContactSubmission.create({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        message: fullMessage,
+        status: "new",
+      });
+
+      if (errors) {
+        throw new Error(errors[0]?.message || "Failed to submit form");
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Form submission error:", err);
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -92,11 +118,11 @@ export default function ContactForm() {
         </div>
 
         {/* Form Type Toggle */}
-        <div className="flex justify-center gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-8">
           <button
             type="button"
             onClick={() => setFormType("lighting")}
-            className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+            className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold transition-colors text-sm sm:text-base ${
               formType === "lighting"
                 ? "bg-[var(--color-navy)] text-white"
                 : "bg-white text-gray-600 border hover:border-[var(--color-navy)]"
@@ -107,7 +133,7 @@ export default function ContactForm() {
           <button
             type="button"
             onClick={() => setFormType("general")}
-            className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+            className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold transition-colors text-sm sm:text-base ${
               formType === "general"
                 ? "bg-[var(--color-navy)] text-white"
                 : "bg-white text-gray-600 border hover:border-[var(--color-navy)]"
@@ -120,9 +146,9 @@ export default function ContactForm() {
         {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-xl p-8 shadow-sm border"
+          className="bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-sm border"
         >
-          <div className="grid md:grid-cols-2 gap-6 mb-6">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
             <div>
               <label
                 htmlFor="name"
@@ -161,7 +187,7 @@ export default function ContactForm() {
             </div>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -180,7 +206,7 @@ export default function ContactForm() {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <label
               htmlFor="description"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -205,12 +231,18 @@ export default function ContactForm() {
             />
           </div>
 
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              {error}
+            </div>
+          )}
+
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !recaptchaReady}
             className="w-full bg-[var(--color-orange)] hover:bg-[var(--color-orange-dark)] disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-4 rounded-lg font-semibold transition-colors"
           >
-            {isSubmitting ? "Sending..." : "Get Free Estimate"}
+            {isSubmitting ? "Sending..." : !recaptchaReady ? "Loading..." : "Get Free Estimate"}
           </button>
 
           <p className="mt-4 text-center text-sm text-gray-500">

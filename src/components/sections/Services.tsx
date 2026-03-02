@@ -1,3 +1,7 @@
+"use client";
+
+import { EditableSection } from "@/components/admin";
+
 const services = [
   {
     title: "Light Installation",
@@ -75,8 +79,9 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="py-20 bg-gray-50">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <EditableSection editHref="/admin/services" editLabel="Edit Services">
+      <section id="services" className="py-20 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-navy)] mb-4">
@@ -124,7 +129,8 @@ export default function Services() {
             </div>
           ))}
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </EditableSection>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { EditableSection } from "@/components/admin";
 
 const faqs = [
   {
@@ -34,8 +35,9 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="py-20 bg-white">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+    <EditableSection editHref="/admin/faqs" editLabel="Edit FAQs">
+      <section className="py-20 bg-white">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-navy)] mb-4">
@@ -86,7 +88,8 @@ export default function FAQ() {
             </div>
           ))}
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </EditableSection>
   );
 }
