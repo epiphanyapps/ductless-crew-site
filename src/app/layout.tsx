@@ -8,6 +8,7 @@ import { AdminModeToggle } from "@/components/admin";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const siteUrl = "https://ductlesscrew.com";
