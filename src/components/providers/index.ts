@@ -1,1 +1,1 @@
-export { default as AmplifyProvider } from "./AmplifyProvider";
+export { default as ConfigureAmplifyClientSide } from "./ConfigureAmplifyClientSide";

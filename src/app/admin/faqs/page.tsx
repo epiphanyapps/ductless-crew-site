@@ -1,6 +1,5 @@
 "use client";
 
-import { Authenticator } from "@aws-amplify/ui-react";
 import { AdminLayout } from "@/components/admin";
 import { useState, useEffect, useCallback } from "react";
 import { client } from "@/lib/amplify-client";
@@ -218,9 +217,5 @@ function FAQsContent() {
 }
 
 export default function FAQsAdminPage() {
-  return (
-    <Authenticator>
-      <FAQsContent />
-    </Authenticator>
-  );
+  return <FAQsContent />;
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { Authenticator } from "@aws-amplify/ui-react";
 import { AdminLayout } from "@/components/admin";
 import { useState, useEffect, use } from "react";
 import { client } from "@/lib/amplify-client";
@@ -344,8 +343,6 @@ export default function BlogEditorPage({ params }: { params: Promise<{ id: strin
   const resolvedParams = use(params);
 
   return (
-    <Authenticator>
-      <BlogEditorContent id={resolvedParams.id} />
-    </Authenticator>
+    <BlogEditorContent id={resolvedParams.id} />
   );
 }

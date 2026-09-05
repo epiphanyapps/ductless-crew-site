@@ -115,8 +115,11 @@ const schema = a.schema({
       status: a.enum(["new", "read", "responded", "archived"]),
     })
     .authorization((allow) => [
+      // Anonymous visitors submit the contact form, so guests may create.
       allow.guest().to(["create"]),
-      allow.authenticated().to(["read"]),
+      // Leads carry customer PII (name, email, phone, message). Reads are
+      // restricted to the admin group -- NOT `authenticated()`, which would
+      // expose every lead to any account that can sign in.
       allow.group("admin").to(["read", "update", "delete"]),
     ]),
 });
