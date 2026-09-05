@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import AmplifyProvider from "@/components/providers/AmplifyProvider";
-import { AdminModeProvider } from "@/contexts";
-import { AdminModeToggle } from "@/components/admin";
+import { ConfigureAmplifyClientSide } from "@/components/providers";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -174,12 +172,8 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
-        <AmplifyProvider>
-          <AdminModeProvider>
-            {children}
-            <AdminModeToggle />
-          </AdminModeProvider>
-        </AmplifyProvider>
+        <ConfigureAmplifyClientSide />
+        {children}
       </body>
     </html>
   );

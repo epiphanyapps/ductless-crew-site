@@ -1,6 +1,5 @@
 "use client";
 
-import { Authenticator } from "@aws-amplify/ui-react";
 import { AdminLayout } from "@/components/admin";
 import Link from "next/link";
 
@@ -117,29 +116,5 @@ function DashboardContent() {
 }
 
 export default function AdminPage() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <Authenticator
-        components={{
-          Header() {
-            return (
-              <div className="text-center mb-6">
-                <div className="h-16 w-16 rounded-xl bg-[var(--color-navy)] flex items-center justify-center mx-auto mb-4">
-                  <span className="text-white font-bold text-2xl">DC</span>
-                </div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Admin Login
-                </h1>
-                <p className="text-gray-600">
-                  Sign in to manage your website content
-                </p>
-              </div>
-            );
-          },
-        }}
-      >
-        <DashboardContent />
-      </Authenticator>
-    </div>
-  );
+  return <DashboardContent />;
 }

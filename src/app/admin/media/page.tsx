@@ -1,6 +1,5 @@
 "use client";
 
-import { Authenticator } from "@aws-amplify/ui-react";
 import { AdminLayout } from "@/components/admin";
 import { useState, useEffect, useCallback } from "react";
 import { uploadData, list, remove, getUrl } from "aws-amplify/storage";
@@ -284,9 +283,5 @@ function MediaLibraryContent() {
 }
 
 export default function MediaPage() {
-  return (
-    <Authenticator>
-      <MediaLibraryContent />
-    </Authenticator>
-  );
+  return <MediaLibraryContent />;
 }
